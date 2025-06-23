@@ -1,0 +1,27 @@
+
+a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+a:hover, a:focus {
+    color:inherit
+}
+
+.textLink {
+    color: var(--stress-color);
+    cursor: pointer;
+}
+
+.textLink, .textLink:hover, .textLink:focus {
+    color: var(--stress-color);
+}
+
+.textLink:hover, .textLink:focus {
+    opacity: 0.8;
+}
+
+a:disabled, a[disabled], .textLink:disabled, .textLink[disabled] {
+    cursor: default;
+}

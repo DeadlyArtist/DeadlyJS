@@ -1,0 +1,124 @@
+input {
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background: inherit;
+  font-size: 1rem;
+  font-family: inherit;
+  min-width: 0;
+  width: 100%;
+}
+
+::placeholder {
+  font-style: italic;
+  color: var(--placeholder-color);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.validationMessage {
+  color: var(--danger-color);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+input:focus-visible {
+  outline: 0;
+  border-color: var(--border-color);
+}
+
+input[type="search"] {
+  padding: 6px 12px;
+}
+
+input[type="number"] {
+  max-width: 100px;
+  padding: 6px 16px;
+}
+
+.smallTextInput {
+  max-width: 400px;
+}
+
+input[type="number"].smallNumberInput {
+  padding: 1px 8px;
+  width: 50px;
+}
+
+input[type="number"].largeNumberInput {
+  max-width: 200px;
+}
+
+input[type="password"] {
+  max-width: 200px;
+  padding: 6px 16px;
+  line-height: 1;
+}
+
+input[type=checkbox], input[type=checkbox]:checked {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+}
+
+input[type=checkbox] {
+  background-color: var(--background-color);
+  cursor: pointer;
+  margin: 0;
+  line-height: 1;
+
+  width: 1em;
+  height: 1em;
+  border: 1px solid var(--border-color);
+  border-radius: 0.15em;
+  display: grid;
+  place-content: center;
+}
+
+input[type=checkbox]:hover {
+  background-color: var(--raised-background-color);
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  transform: scale(0);
+  box-shadow: inset 1em 1em var(--text-color);
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+/* Styling for select elements */
+select {
+  padding: 6px 12px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: inherit;
+  min-width: 0;
+}
+
+select:hover {
+  background-color: var(--hover-background-color);
+  border-color: var(--raised-border-color);
+}
+
+select:focus {
+  outline: none;
+}
+
+select:disabled {
+  background-color: var(--disabled-background-color);
+  color: var(--raised-text-color);
+  border-color: var(--raised-border-color);
+  cursor: not-allowed;
+}

@@ -58,11 +58,24 @@ async function onBodyCreated(callback) {
     });
 }
 
-let isHtmlBeforeScriptsLoaded = false;
+let isLoaded = false;
+async function onLoaded(callback) {
+    return new Promise((resolve, reject) => {
+        let _callback = () => { callback(); resolve(); }
+        if (isLoaded) {
+            _callback();
+        } else {
+            window.addEventListener('load', e => _callback());
+        }
+    });
+}
+onLoaded(() => isLoaded = true);
+
+let isHtmlFromBeforeScriptsLoaded = false;
 async function onBeforeScriptsAfterHtml(callback) {
     return new Promise((resolve, reject) => {
         let _callback = () => { callback(); resolve(); }
-        if (isHtmlBeforeScriptsLoaded) {
+        if (isHtmlFromBeforeScriptsLoaded) {
             _callback();
         } else {
             window.addEventListener('before-scripts', e => _callback());
@@ -317,6 +330,627 @@ function debounce(func, delay) {
 }
 
 function doNothing() { }
+
+// Requires DOMPurify library
+function sanitizeHtml(html) {
+    return DOMPurify.sanitize(html);
+}
+
+const kilobyte = 1024;
+const megabyte = kilobyte * 1024;
+const gigabyte = megabyte * 1024;
+
+
+function isNumber(obj) {
+    return typeof obj == 'number';
+}
+// isString is in string helpers region
+function isFunction(obj) {
+    return typeof obj == 'function';
+}
+function isArray(obj) {
+    return Array.isArray(obj);
+}
+function isObject(obj) {
+    return typeof obj == 'object';
+}
+//// ENDREGION
+
+
+//// REGION: Time helpers
+const millisecond = 1;
+function milliseconds(milliseconds) {
+    return millisecond * milliseconds;
+}
+
+const second = millisecond * 1000;
+function seconds(seconds) {
+    return second * seconds;
+}
+
+const minute = second * 60;
+function minutes(minutes) {
+    return minute * minutes;
+}
+
+const hour = minute * 60;
+function hours(hours) {
+    return hour * hours;
+}
+
+const day = hour * 24;
+function days(days) {
+    return day * days;
+}
+
+const week = day * 24;
+function weeks(weeks) {
+    return week * weeks;
+}
+
+function isDurationOver(startTime, duration) {
+    return Date.now() - startTime > duration;
+}
+
+function getRemainingDuration(startTime, duration) {
+    const elapsed = Date.now() - startTime;
+    const remaining = duration - elapsed;
+    return remaining > 0 ? remaining : 0;
+}
+//// ENDREGION
+
+
+//// REGION: Fetch helpers
+class FetchHelpers {
+    static fetchCache = {};
+    static fetchPromises = {};
+    static fetchTextCache = {};
+    static fetchTextPromises = {};
+}
+
+async function fetchText(url) {
+    const response = await fetch(url);
+    return await response.text();
+}
+
+async function fetchFromJson(url) {
+    return JSON.parse(await fetchText(url));
+}
+
+async function fetchWithCache(url) {
+    if (FetchHelpers.fetchCache[url]) return FetchHelpers.fetchCache[url];
+    if (FetchHelpers.fetchPromises[url]) return await FetchHelpers.fetchPromises[url];
+
+    const promise = fetch(url);
+    FetchHelpers.fetchPromises[url] = promise;
+    const result = await promise;
+    FetchHelpers.fetchCache[url] = result;
+    delete FetchHelpers.fetchPromises[url];
+    return result;
+}
+
+async function fetchTextWithCache(url) {
+    if (FetchHelpers.fetchTextCache[url]) return await FetchHelpers.fetchTextCache[url];
+    if (FetchHelpers.fetchTextPromises[url]) return await FetchHelpers.fetchTextPromises[url];
+
+    const promise = (async () => {
+        const response = await fetch(url);
+        const text = await response.text();
+        return text;
+    })();
+    FetchHelpers.fetchTextPromises[url] = promise;
+    const result = await promise;
+    FetchHelpers.fetchTextCache[url] = result;
+    delete FetchHelpers.fetchTextPromises[url];
+    return result;
+}
+
+async function fetchFromJsonWithCache(url) {
+    return JSON.parse(await fetchTextWithCache(url));
+}
+//// ENDREGION
+
+
+//// REGION: String helpers
+const _htmlStringHelpers = {
+    escapeHtmlChars: {
+        '¢': 'cent',
+        '£': 'pound',
+        '¥': 'yen',
+        '€': 'euro',
+        '©': 'copy',
+        '®': 'reg',
+        '<': 'lt',
+        '>': 'gt',
+        '"': 'quot',
+        '&': 'amp',
+        '\'': '#39',
+    },
+    getEscapeHtmlRegex() {
+        let escapeHtmlRegexString = '[';
+        for (let key in _htmlStringHelpers.escapeHtmlChars) {
+            escapeHtmlRegexString += key;
+        }
+        escapeHtmlRegexString += ']';
+        const regex = new RegExp(escapeHtmlRegexString, 'g');
+        return regex;
+    },
+    htmlEntities: {
+        nbsp: ' ',
+        cent: '¢',
+        pound: '£',
+        yen: '¥',
+        euro: '€',
+        copy: '©',
+        reg: '®',
+        lt: '<',
+        gt: '>',
+        quot: '"',
+        amp: '&',
+        apos: '\''
+    },
+};
+_htmlStringHelpers.escapeHtmlRegex = _htmlStringHelpers.getEscapeHtmlRegex();
+
+function escapeHTML(str) {
+    return String(str).replace(_htmlStringHelpers.escapeHtmlRegex, function (m) {
+        return '&' + _htmlStringHelpers.escapeHtmlChars[m] + ';';
+    });
+}
+function unescapeHTML(str) {
+    return str.replace(/\\&([^;]+);/g, function (entity, entityCode) {
+        let match;
+
+        if (entityCode in _htmlStringHelpers.htmlEntities) {
+            return _htmlStringHelpers.htmlEntities[entityCode];
+            /*eslint no-cond-assign: 0*/
+        } else if (match = entityCode.match(/^#x([\\da-fA-F]+)$/)) {
+            return String.fromCharCode(parseInt(match[1], 16));
+            /*eslint no-cond-assign: 0*/
+        } else if (match = entityCode.match(/^#(\\d+)$/)) {
+            return String.fromCharCode(~~match[1]);
+        } else {
+            return entity;
+        }
+    });
+}
+
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+function unescapeRegex(string) {
+    return string.replace(/\\([.*+?^${}()|[\]\\])/g, '$1');  // $1 refers to the captured group
+}
+
+function escapeReplacement(string) {
+    return string.replace(/\$/g, '$$$$');
+}
+
+function escapeCamelCase(name) {
+    const parts = escapeFileName(name).replace('\.\-', ' ').replace('( )*', ' ').trim().split(' ');
+    if (parts[0].length != 0) parts[0] = parts[0][0].toLowerCase() + parts[0].slice(1);
+    for (let i = 1; i < parts.length; i++) {
+        if (parts[i].length != 0) parts[i] = parts[i][0].toUpperCase() + parts[i].slice(1);
+    }
+    return parts.join('');
+}
+
+function removeFirstChar(str) {
+    return str.substring(1);
+}
+function removeLastChar(str) {
+    return str.substring(0, str.length - 1);
+}
+
+function isString(str, orNull = false) {
+    return (orNull && str == null) || typeof str === 'string' || str instanceof String;
+}
+
+function getStringByteSize(string) {
+    string.length * 2;
+}
+
+function addIndent(string, spaces = 4) {
+    return string.split('\n').map(l => ' '.repeat(spaces) + l).join('\n');
+}
+function getIndexBeyond(string, searchTerm, startIndex = 0) {
+    const nextIndex = string.indexOf(searchTerm, startIndex);
+    if (nextIndex === -1) return null;
+    const newIndex = nextIndex + searchTerm.length;
+    if (newIndex === searchTerm.length) return null;
+    return nextIndex;
+}
+
+function getSubstringAfterOrNull(string, searchTerm, startIndex = 0) {
+    const searchIndex = string.indexOf(searchTerm, startIndex);
+    if (searchIndex === -1) return null;
+    return string.slice(searchIndex + searchTerm.length);
+}
+
+function getSubstringAfter(string, searchTerm, startIndex = 0) {
+    const searchIndex = string.indexOf(searchTerm, startIndex);
+    return searchIndex === -1 ? string : string.slice(searchIndex + searchTerm.length);
+}
+
+function getSubstringBeforeOrNull(string, searchTerm, startIndex = 0) {
+    const searchIndex = string.indexOf(searchTerm, startIndex);
+    if (searchIndex === -1) return null;
+    return string.slice(0, searchIndex);
+}
+
+function getSubstringBefore(string, searchTerm, startIndex = 0) {
+    const searchIndex = string.indexOf(searchTerm, startIndex);
+    return searchIndex === -1 ? string : string.slice(0, searchIndex);
+}
+
+function getSubstringAfterLastOrNull(string, searchTerm, endIndex = null) {
+    const adjustedEndIndex = endIndex !== null ? endIndex : string.length;
+    const lastIndex = string.lastIndexOf(searchTerm, adjustedEndIndex);
+    if (lastIndex === -1) return null;
+    return string.slice(lastIndex + searchTerm.length, adjustedEndIndex);
+}
+
+function getSubstringAfterLast(string, searchTerm, endIndex = null) {
+    const adjustedEndIndex = endIndex !== null ? endIndex : string.length;
+    const lastIndex = string.lastIndexOf(searchTerm, adjustedEndIndex);
+    return lastIndex === -1 ? '' : string.slice(lastIndex + searchTerm.length, adjustedEndIndex);
+}
+
+function getSubstringBeforeLastOrNull(string, searchTerm, endIndex = null) {
+    const adjustedEndIndex = endIndex !== null ? endIndex : string.length;
+    const lastIndex = string.lastIndexOf(searchTerm, adjustedEndIndex);
+    if (lastIndex === -1) return null;
+    return string.slice(0, lastIndex);
+}
+
+function getSubstringBeforeLast(string, searchTerm, endIndex = null) {
+    const adjustedEndIndex = endIndex !== null ? endIndex : string.length;
+    const lastIndex = string.lastIndexOf(searchTerm, adjustedEndIndex);
+    return lastIndex === -1 ? string : string.slice(0, lastIndex);
+}
+
+function getSubstringStartingWith(string, searchTerm, startIndex = 0) {
+    const searchIndex = string.indexOf(searchTerm, startIndex);
+    return searchIndex === -1 ? '' : string.slice(searchIndex);
+}
+
+function getSubstringStartingWithOrNull(string, searchTerm, startIndex = 0) {
+    const searchIndex = string.indexOf(searchTerm, startIndex);
+    return searchIndex === -1 ? null : string.slice(searchIndex);
+}
+
+function getSubstringStartingWithLast(string, searchTerm, endIndex = null) {
+    const adjustedEndIndex = endIndex !== null ? endIndex : string.length;
+    const lastIndex = string.lastIndexOf(searchTerm, adjustedEndIndex);
+    return lastIndex === -1 ? '' : string.slice(lastIndex);
+}
+
+function getSubstringStartingWithLastOrNull(string, searchTerm, endIndex = null) {
+    const adjustedEndIndex = endIndex !== null ? endIndex : string.length;
+    const lastIndex = string.lastIndexOf(searchTerm, adjustedEndIndex);
+    return lastIndex === -1 ? null : string.slice(lastIndex);
+}
+
+function toNormalCase(text, makeLowerCase = false) {
+    if (makeLowerCase) text = text.toLowerCase();
+    text = text.replace(/_/g, ' ');
+    return text.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
+
+function toTextCase(text) {
+    text = toNormalCase(text);
+    text = text.replace(/([A-Z])/g, ' $1').trim();
+    return text;
+}
+
+function toCamelCase(str) {
+    return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+        return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    }).replace(/\s+/g, '');
+}
+
+function findAllIndicesInString(str, subString) {
+    if (subString.length == 0) return range(str.length);
+    let indices = [];
+    let i = 0;
+    while (~(i = str.indexOf(subString, i))) {
+        indices.push(i);
+        i += subString.length;
+    }
+    return indices;
+}
+//// ENDREGION
+
+
+
+//// REGION: URL helpers
+function getUrl() {
+    return window.location.href;
+}
+
+function getUrlBase(url = null) {
+    url ??= window.location.href;
+    url = getSubstringBefore(url, '#');
+    url = getSubstringBefore(url, '?');
+    return url;
+}
+
+function getUrlWithoutHash(url = null) {
+    url ??= window.location.href;
+    url = getSubstringBefore(url, '#');
+    return url;
+}
+
+function getUrlModifiers(url = null) {
+    url ??= window.location.href;
+    hash = url.indexOf('#');
+    query = url.indexOf('?');
+    if (hash == query) return "";
+
+    var first = query;
+    if (hash < query) {
+        if (hash != -1) first = hash;
+    } else {
+        if (query == -1) first = hash;
+    }
+    url = url.substring(first);
+
+    return url;
+}
+
+function getServerUrl(url = null) {
+    url ??= window.location.href;
+    url = getSubstringBefore(url, '#');
+    return url;
+}
+
+function getPath(url = null) {
+    url ??= window.location.href;
+    url = getSubstringBefore(url, '#');
+    url = getSubstringBefore(url, '?');
+    const domainEndIndex = url.indexOf('//') >= 0 ? url.indexOf('/', url.indexOf('//') + 2) : url.indexOf('/');
+    if (domainEndIndex === -1) return '/';
+    return url.substring(domainEndIndex);
+}
+
+function getDomain(url = null) {
+    url ??= window.location.href;
+    url = getSubstringBefore(url, '#');
+    url = getSubstringBefore(url, '?');
+    const doubleSlashIndex = url.indexOf('//');
+    const domainStartIndex = (doubleSlashIndex >= 0) ? doubleSlashIndex + 2 : 0;
+    const domainEndIndex = url.indexOf('/', domainStartIndex);
+    if (domainEndIndex === -1) url = url.substring(domainStartIndex);
+    url = url.substring(domainStartIndex, domainEndIndex);
+
+    if (!url.includes('.') || url.length == 0) return null;
+    return url;
+}
+
+function getOrigin(url = null) {
+    url ??= window.location.href;
+    url = getSubstringBefore(url, '#');
+    url = getSubstringBefore(url, '?');
+    const doubleSlashIndex = url.indexOf('//');
+    const protocol = doubleSlashIndex >= 0 ? url.substring(0, doubleSlashIndex + 2) : '';
+    const domain = getDomain(url);
+    return protocol + domain;
+}
+
+function getProtocol(url = null) {
+    url ??= window.location.href;
+    const protocolEndIndex = url.indexOf(':');
+    if (protocolEndIndex === -1) return '';
+    return url.substring(0, protocolEndIndex);
+}
+
+function getUrlWithChangedPath(newPath, url = null) {
+    url ??= window.location.href;
+    const origin = getOrigin(url), modifiers = getUrlModifiers(url);
+    if (!newPath.startsWith('/')) newPath = '/' + newPath;
+    return origin + newPath + modifiers;
+}
+
+function getUrlWithChangedHash(newHash, url = null) {
+    url ??= window.location.href;
+    const base = getUrlBase(url), query = getSubstringBefore(getUrlModifiers(url), '#');
+    if (newHash == '#') newHash = '';
+    else if (!newHash.startsWith('#')) newHash = '#' + newHash;
+    return base + query + newHash;
+}
+
+function getUrlWithChangedDomain(newDomain, url = null) {
+    url ??= window.location.href;
+    const protocol = getProtocol(url), path = getPath(url), modifiers = getUrlModifiers(url);
+    return `${protocol}://${newDomain}${path}${modifiers}`;
+}
+
+function getUrlWithChangedOrigin(newOrigin, url = null) {
+    url ??= window.location.href;
+    const path = getPath(url), modifiers = getUrlModifiers(url);
+    if (newOrigin.endsWith('/')) newOrigin = newOrigin.slice(0, -1);
+    return `${newOrigin}${path}${modifiers}`;
+}
+
+function getUrlWithChangedProtocol(newProtocol, url = null) {
+    url ??= window.location.href;
+    const domain = getDomain(url), path = getPath(url), modifiers = getUrlModifiers(url);
+    if (!newProtocol.endsWith(':')) newProtocol += ':';
+    return `${newProtocol}//${domain}${path}${modifiers}`;
+}
+
+function getQueryVariable(variable, url = null) {
+    url ??= window.location.href;
+    url = url.split('#')[0];
+    const query = url.split('?')[1];
+    if (!query) return undefined;
+
+    const vars = query.split('&');
+    for (const pair of vars) {
+        const [key, value] = pair.split('=');
+        if (key == variable) return decodeURIComponent(value);
+    }
+    return undefined;
+}
+
+
+function goToUrl(url) {
+    window.location.href = url;
+}
+
+function replaceUrl(newUrl) {
+    if (newUrl == getUrl()) return;
+    history.replaceState(null, "", newUrl);
+}
+
+const loadWithoutRequestEvent = new CustomEvent('load-silently');
+// Update the browser's URL without reloading the page
+function goToUrlWithoutRequest(url, dispatchEvent = true) {
+    if (url == getUrl()) return;
+    window.history.pushState({}, '', url);
+    if (dispatchEvent) window.dispatchEvent(loadWithoutRequestEvent);
+}
+
+function changeHash(hash, url = null) {
+    const newUrl = getUrlWithChangedHash(hash, url);
+    const oldUrl = getUrl();
+    if (newUrl == oldUrl) return;
+    goToUrlWithoutRequest(newUrl, false);
+
+    const hashChangeEvent = new HashChangeEvent('hashchange', {
+        oldURL: oldUrl,
+        newURL: newUrl,
+    });
+    window.dispatchEvent(hashChangeEvent);
+}
+
+function createObjectUrl(object, options = undefined) {
+    const blob = new Blob([object], options);
+    const blobUrl = URL.createObjectURL(blob);
+    return blobUrl;
+}
+//// ENDREGION
+
+
+//// Region: Hash helpers
+/**
+ * Retrieves the value of the specified query parameter from the current URL.
+ *
+ * @param {string} param - The name of the parameter to retrieve.
+ * @param {boolean} log - Whether to log the param.
+ * @returns {string|null} - Returns the value of the parameter, or null if the parameter is not found.
+ */
+function getHashQueryVariable(param, log = false) {
+    let hashSearchParams = getHashParams();
+
+    let value = hashSearchParams.get(param);
+    if (log) console.log(param, value);
+    // Use the get method to retrieve the value of the parameter
+    return value;
+}
+
+class URLHashParams {
+    constructor(params) {
+        this.params = new Map(params ? params.split('&').map(p => p.split('=').map(q => unescapeHashParameter(q))) : []);
+    }
+
+    get(key) {
+        return this.params.get(key);
+    }
+
+    set(key, value) {
+        return this.params.set(key, value);
+    }
+
+    delete(key) {
+        return this.params.delete(key);
+    }
+
+    values() {
+        return this.params.values();
+    }
+
+    keys() {
+        return this.params.keys();
+    }
+
+    entries() {
+        return this.params.entries();
+    }
+
+    toString() {
+        return Array.from(this.params.entries())
+            .map(([key, value]) => `${escapeHashParameter(key)}=${escapeHashParameter(value)}`)
+            .join('&');
+    }
+}
+
+function getHashParams() {
+    let hashParts = window.location.hash.split("?");
+    let hashSearchParams = new URLHashParams(hashParts.length === 1 ? '' : hashParts[1]);
+    return hashSearchParams;
+}
+
+function getHash(url = null) {
+    url ??= window.location.href;
+    let parts = url.split('#', 2);
+    let hash;
+    if (parts.length == 1) hash = '';
+    else hash = parts[1];
+    return '#' + hash;
+}
+
+function getHashUrl() {
+    let hashParts = window.location.hash.split("?");
+    return hashParts[0];
+}
+
+function getPathFromHash() {
+    return removeFirstChar(getHashUrl());
+}
+
+function getPathPartFromHash(index) {
+    const parts = getPathFromHash().split("/");
+    return parts.length > index ? parts[index] : null;
+}
+
+function buildUrlWithNewHashParams(hashSearchParams) {
+    let hashSearchParamsString = hashSearchParams.toString();
+
+    let url = new URL(window.location);
+    url.hash = '';
+    let hashParts = window.location.hash.split("?");
+    let baseHash = hashParts[0];
+    if (baseHash == '' && hashSearchParamsString != '') baseHash = '#';
+    let urlString = url.toString() + baseHash + (hashSearchParamsString === '' ? '' : ('?' + hashSearchParamsString));
+    return urlString;
+}
+
+function getUrlWithChangedHashParam(name, value) {
+    const hashParams = getHashParams();
+    if (value == null || value == "") {
+        hashParams.delete(name);
+    } else {
+        hashParams.set(name, value);
+    }
+
+    const url = buildUrlWithNewHashParams(hashParams);
+    return url;
+}
+
+function getHashWithChangedParam(name, value) {
+    const url = getUrlWithChangedHashParam(name, value);
+    return getHash(url);
+}
+
+function escapeHashParameter(param) {
+    return param.replace(/[#?&=%]/g, match => encodeURIComponent(match));
+}
+
+function unescapeHashParameter(param) {
+    return decodeURIComponent(param);
+}
 //// ENDREGION
 
 
@@ -341,6 +975,22 @@ function fromHTML(html, collapse = true, trim = true) {
     // based on whether the input HTML had one or more roots.
     if (collapse && result.length === 1) return result[0];
     return result;
+}
+
+function getClosestWithProperty(element, property) {
+    while (element) {
+        if (element[property] !== undefined) return element;
+        element = element.parentElement;
+    }
+    return undefined;
+}
+
+function getClosestProperty(element, property) {
+    while (element) {
+        if (element[property] !== undefined) return element[property];
+        element = element.parentElement;
+    }
+    return undefined;
 }
 
 function spliceChildren(element, start = -1, deleteCount = 0, ...newChildren) {

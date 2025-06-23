@@ -1,0 +1,13 @@
+﻿.highlight {
+  background-color: var(--highlight-color);
+  color: inherit;
+}
+
+.search-highlight {
+  background-color: var(--search-highlight-color);
+  color: inherit;
+}
+
+h2 .search-highlight, h4 .search-highlight {
+  background-color: var(--contrast-search-highlight-color);
+}

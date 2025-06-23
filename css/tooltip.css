@@ -1,0 +1,100 @@
+
+.tooltip {
+  position: absolute;
+  top: 2px;
+  z-index: 9999;
+  border-radius: 10px;
+  display: block;
+  height: max-content;
+  min-width: 0px;
+  width: max-content;
+  max-width: calc(100vw - 12px);
+  background-color: var(--tooltip-background-color);
+  border: 1px solid var(--tooltip-border-color);
+}
+
+[color-scheme="light"] .tooltip {
+  border-color: var(--brand-color);
+}
+
+
+.cardTooltip {
+  border-radius: 10px;
+  padding: 32px;
+  width: max-content;
+  max-width: min(calc(100vw - 12px), 700px);
+}
+
+@media (max-width: 450px) {
+  .cardTooltip {
+    padding: 12px 12px 16px 16px;
+  }
+}
+
+.smallTooltip {
+  border-radius: 5px;
+  padding: 8px;
+  width: max-content;
+  max-width: min(calc(100vw - 12px), 400px);
+}
+
+.tooltip[tooltip-position="top"]::after {
+  content: " ";
+  position: absolute;
+  top: 100%;
+  /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--tooltip-border-color) transparent transparent transparent;
+}
+
+.tooltip[tooltip-position="bottom"]::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  /* At the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--tooltip-border-color) transparent;
+}
+
+.tooltip[tooltip-position="left"]::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  /* To the right of the tooltip */
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent var(--tooltip-border-color);
+}
+
+.tooltip[tooltip-position="right"]::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  /* To the left of the tooltip */
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent var(--tooltip-border-color) transparent transparent;
+}
+
+/* markTooltips required because you only want to target text tooltips, and not e.g. button tooltips. */
+.colorTooltips .markTooltips .tooltipTarget {
+  color: var(--stress-color);
+}
+
+.underlineTooltips .markTooltips .tooltipTarget {
+  text-decoration: underline 2px;
+}
+
+.highlightTooltips .markTooltips .tooltipTarget {
+  background-color: var(--highlight-color);
+}

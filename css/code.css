@@ -1,0 +1,41 @@
+code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: clip;
+  background: var(--inline-code-background-color);
+  color: var(--inline-code-color);
+}
+
+.codeBar {
+  background-color: var(--code-bar-background-color);
+  color: var(--codeblock-color);
+  border-radius: 8px 8px 0 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+  pre code {
+    background-color: var(--codeblock-background-color);
+    color: var(--codeblock-color);
+    display: block;
+    padding: 8px 16px;
+  }
+
+.preContainer {
+  background-color: var(--codeblock-background-color);
+  border-radius: 8px;
+  margin: 0;
+  color: var(--codeblock-color);
+}
+
+.markdown .preContainer {
+  margin: 16px 0;
+}
+
+.codeLanguage {
+  padding: 5px 10px;
+  font-size: 14px;
+}

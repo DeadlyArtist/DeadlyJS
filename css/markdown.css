@@ -1,0 +1,36 @@
+.markdown>p {
+    margin-bottom: 16px;
+}
+
+.markdown {
+    padding-top: 10px;
+}
+
+.markdownRawText {
+    white-space: pre-wrap;
+    word-break: break-word;
+    padding-top: 10px;
+    padding-bottom: 16px;
+}
+
+.markdown table {
+    margin-bottom: 16px;
+}
+
+.markdownTopBar, .markdownBottomBar {
+    background-color: var(--code-bar-background-color);
+    color: var(--codeblock-color);
+}
+
+.markdownTopBar {
+    border-radius: 8px 8px 0 0;
+}
+
+.markdownBottomBar {
+    border-radius: 0 0 8px 8px;
+}
+
+.markdownPreview {
+    padding: 10px 16px;
+    padding-top: 20px;
+}

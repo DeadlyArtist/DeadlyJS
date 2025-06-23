@@ -158,7 +158,7 @@ function resizeAllMasonryGrids() {
 }
 
 function resizeClosestMasonryGrid(element) {
-    HtmlHelpers.getClosestProperty(element, "_masonry")?.resize();
+    getClosestProperty(element, "_masonry")?.resize();
 }
 
 onBodyCreated(() => {

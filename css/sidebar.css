@@ -1,0 +1,40 @@
+.jsSidebarHide {
+    display: none;
+}
+
+.jsSidebarControlsHide {
+    display: none;
+}
+
+.sidebar {
+  background: var(--sidebar-background-color);
+  width: var(--sidebar-width);
+  height: 100vh;
+  padding-top: var(--navbar-height);
+  padding-bottom: 8px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
+
+@media (max-width: var(--sidebar-width)) {
+  .sidebar {
+    width: 100vw;
+  }
+}
+
+
+.sidebarElement {
+    padding-left: 46px;
+}
+  
+.sidebarOverlay {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: color-mix(in srgb, var(--overlay-color), transparent 25%);
+    z-index: 500;
+    opacity: 1;
+    transition: all .5s ease-in-out;
+}

@@ -24,9 +24,7 @@ class ServiceWorkerHelpers {
                             if (navigator.serviceWorker.controller) {
                                 // A new update is available
                                 console.log("New update available, refresh to update.");
-                                if (confirm("A new version of the app is available. Refresh?")) {
-                                    window.location.reload();
-                                }
+                                ServiceWorkerHelpers.promptAppUpdate();
                             } else {
                                 console.log("Service Worker installed for the first time.");
                             }
@@ -74,6 +72,12 @@ class ServiceWorkerHelpers {
 
         if (confirm(`Refresh to apply updates?`)) {
             window.location.reload(true);
+        }
+    }
+
+    static promptAppUpdate() {
+        if (confirm("A new version of the app is available. Refresh?")) {
+            window.location.reload();
         }
     }
 }

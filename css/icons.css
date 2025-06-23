@@ -1,0 +1,23 @@
+.icon {
+  color: inherit;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  user-select: none !important;
+  fill: currentColor;
+  height: 24px;
+  width: 24px;
+}
+
+.smallIcon {
+  height: 20px;
+  width: 20px;
+}
+
+.minimalIcon {
+  height: 16px;
+  width: 16px;
+}
+
+.noFill {
+  fill: none
+}

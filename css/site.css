@@ -1,0 +1,112 @@
+html {
+  background: var(--background-color);
+  font-size: 16px;
+  font-family: monospace;
+  line-height: 1.5;
+  word-break: break-word;
+  overflow: hidden;
+  position: fixed;
+}
+
+body {
+  height: 100vh;
+  margin: 0;
+  position: fixed;
+}
+
+.navBarBreak {
+    height: var(--navbar-height);
+}
+
+#scrollingElement {
+    height: calc(100vh - var(--navbar-height));
+    width: 100vw;
+    overflow-y: auto;
+}
+
+.navbar {
+    height: var(--navbar-height);
+    background-color: var(--navbar-background-color);
+    padding: 0 12px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+  padding-right: 12px;
+  padding-left: 12px;
+  padding-bottom: 10vh;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: calc(12px + calc(calc(100vw - 100%) / 2));
+  }
+}
+
+@media (min-width: 1666px) {
+  .container {
+    max-width: calc(90vw - var(--sidebar-width) * 2);
+  }
+}
+
+p {
+    margin: 0;
+}
+
+.flowStickyContainer {
+    box-shadow: -2px 0 0 0 var(--background-color), 2px 0 0 0 var(--background-color);
+}
+
+/*h1 {
+  text-shadow: 0 0 5px var(--background-color), 0 0 10px #d500ff;
+}*/
+
+input:focus-visible {
+  border-color: var(--brand-color);
+}
+
+.contenteditableContainer:focus-within {
+  border-color: var(--brand-color);
+  outline: unset;
+}
+
+.sidebarElement.borderedHoverable:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1px var(--brand-color);
+}
+
+.dialogInnerContent.bordered {
+  border-color: var(--brand-color);
+}
+
+.brand-bordered-inset {
+  box-shadow: inset 0 0 0 1px var(--brand-color);
+}
+
+.brand-border-color {
+  border-color: var(--brand-color);
+}
+
+/*.colorTooltips .markTooltips .tooltipTarget.section-formula {
+  color: var(--brand-color);
+}*/
+
+.w-50 {
+  width: 50%;
+}
+
+.w-80 {
+  width: 80%;
+}
+
+.top-line-section-overview .section:first-of-type .section-title:first-of-type {
+  line-height: 1;
+  padding-bottom: 0.25em;
+}
