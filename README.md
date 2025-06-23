@@ -1,5 +1,5 @@
 # DeadlyJS
-A collection of useful and modular js files.
+A collection of useful and modular js and css files.
 
 ## How to Use
 Locate pieces of code you need and copy them into your project, or modify them as needed.
@@ -9,7 +9,7 @@ Don't use URL links!
 ## Scripts
 Scripts can either be put into the tail of the body (as is often the default approach) or the head (uncommon, but often useful). The scripts below are marked by either HEAD or TAIL to help you put them at the right place. The HEAD scripts should be put before any styles so they can execute their code faster. (As the website waits until all files from the head are fully loaded before starting to load the body, there's no reason to do it the other way around.)
 
-This library puts most scripts in HEAD to support dynamic website generation.
+This library puts most scripts in HEAD to support dynamic website generation (such as SPAs).
 
 ### coreHelpers.js
 HEAD (Before all other scripts, except colorSchemes.js and serviceWorkerHelpers.js)  
