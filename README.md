@@ -129,6 +129,10 @@ Greatly simplifies downloading (and managing) of files (and dataURLs). Also incl
 HEAD  
 Provides very simple fromHTML helpers. Includes horizontal and vertical breaks.
 
+### highlighter.js
+HEAD  
+Fast text highlighter (similar to browser STRG+F). Supports buffering (e.g. for rapid search input).
+
 ### icons.js
 HEAD  
 Requires: icons.css  
