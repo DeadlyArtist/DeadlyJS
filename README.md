@@ -221,13 +221,13 @@ Helps with scrolling dynamically. Requires having an element with "scrollingElem
 - Check for scroll bar presence
 
 ### serviceWorker_SPA_.js
-NONE (Dynamically loaded)
-Note: Remove the _SPA from the name to use it and put it into the top level directory (not any js folder)
+NONE (Dynamically loaded)  
+Note: Remove the _SPA from the name to use it and put it into the top level directory (not any js folder)  
 A sample implementation for a single page application (SPA), which expects the server to respond with the same index.html, no matter which path (that starts with "/app/") is requested. Uses a Stale-While-Revalidate caching strategy (Serve cached content immediately, fetch & update cache in background).
 
 ### serviceWorkerHelpers.js
 HEAD (Before all other scripts)  
-Requires: A top level serviceWorker.js script
+Requires: A top level serviceWorker.js script  
 Helps with simple service workers. Prompts user to refresh the page after find a new service worker or receiving a RESOURCE_UPDATED message.
 
 ### sidebar.js
