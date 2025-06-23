@@ -131,7 +131,7 @@ Provides very simple fromHTML helpers. Includes horizontal and vertical breaks.
 
 ### highlighter.js
 HEAD  
-Fast text highlighter (similar to browser STRG+F). Supports buffering (e.g. for rapid search input).
+Fast text highlighter (similar to browser CTRL+F). Supports buffering (e.g. for rapid search input).
 
 ### icons.js
 HEAD  
