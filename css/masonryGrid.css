@@ -1,0 +1,10 @@
+﻿.masonryGrid {
+  position: relative; /* Important for absolute-positioned items inside */
+  width: 100%; /* Ensure container fits all items horizontally (full width by default) */
+  overflow: hidden; /* Hide any overflow from weird positioning, if necessary */
+}
+
+.masonryGridItem {
+  position: absolute; /* Items will be positioned grid-style inside the container */
+  box-sizing: border-box; /* Ensure that padding/margins are included inside the calculated width */
+}

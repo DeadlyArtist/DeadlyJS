@@ -1,0 +1,119 @@
+/* Text color palette */
+/* https://coolors.co/palette/222222-006daa-008ee0-70cbff-ade1ff */
+:root {
+    color-scheme: light;
+}
+
+/* The variabels should work with multiple levels of abstractions. */
+/* First generic color definitions, then more and more element specific. */
+[color-scheme="dark"], .dark {
+  color-scheme: dark;
+  /* Generic Colors */
+  --brand-color: #b865bc;
+  --danger-color: #d97263;
+  --success-color: #63da86;
+  /* Text Colors */
+  --text-color: #EEE;
+  --raised-text-color: #BBB;
+  --stress-color: #78bfc1;
+  --placeholder-color: #666;
+  --mark-color: #007892;
+  /* Background Colors */
+  --background-color: #222;
+  --raised-background-color: #333;
+  --disabled-background-color: #777;
+  --lowered-background-color: #111;
+  --active-background-color: #444;
+  --hover-background-color: #555;
+  /* Highlight Colors */
+  --highlight-color: #2f4f4f;
+  --search-highlight-color: #1a8a1f; /* Old: #717452, #8f9361, #818a1a, #8a1a1a */
+  --contrast-search-highlight-color: #7cb36e; /* Old: #bdc093, #7eb680 */
+  --danger-highlight-color: #2f4f4f;
+  /* Other Colors */
+  --border-color: #444;
+  --raised-border-color: #888;
+  --shadow-color: #000;
+  --overlay-color: var(--shadow-color);
+  --caret-color: var(--text-color);
+  /* Headers */
+  --h1-color: var(--text-color);
+  --h2-color: #3086b7;
+  --h3-color: #5fa8d1; /* Old: #008EE0 */
+  --h4-color: #6375ba;
+  --h5-color: #999; /* Old: #8b8b8b, #aaa */
+  --h6-color: #006DAA;
+  /* Specific Elements */
+  --sidebar-background-color: var(--background-color);
+  --navbar-background-color: var(--background-color);
+  --tooltip-background-color: var(--lowered-background-color);
+  --tooltip-border-color: var(--brand-color);
+  --code-bar-background-color: var(--raised-background-color);
+  --codeblock-color: var(--text-color);
+  --codeblock-background-color: var(--lowered-background-color);
+  --inline-code-color: var(--text-color);
+  --inline-code-background-color: #444;
+  --progress-background-color: var(--raised-background-color);
+  --progress-foreground-color: var(--text-color);
+}
+
+/* The variabels should work with multiple levels of abstractions. */
+/* First generic color definitions, then more and more element specific. */
+[color-scheme="light"], .light {
+  color-scheme: light;
+  /* Generic Colors */
+  --brand-color: #b865bc;
+  --danger-color: #8a291b;
+  --success-color: #209b43;
+  /* Text Colors */
+  --text-color: #111;
+  --raised-text-color: #333;
+  --stress-color: #30765a;
+  --placeholder-color: #999;
+  --mark-color: #73d2e6;
+  /* Background Colors */
+  --background-color: #EEE;
+  --raised-background-color: #E7E7E7;
+  --disabled-background-color: #777;
+  --lowered-background-color: #FFF;
+  --active-background-color: #DDD;
+  --hover-background-color: #DDD;
+  /* Highlight Colors */
+  --highlight-color: #c9e1e1; /* Maybe #FFF instead. */
+  --search-highlight-color: #cbd657;
+  --contrast-search-highlight-color: var(--search-highlight-color);
+  --danger-highlight-color: #c9e1e1;
+  /* Other Colors */
+  --border-color: #CCC;
+  --raised-border-color: #777;
+  --shadow-color: #FFF;
+  --overlay-color: var(--shadow-color);
+  --caret-color: var(--text-color);
+  /* Headers */
+  --h1-color: var(--text-color);
+  --h2-color: #004b77;
+  --h3-color: #5fa8d1;
+  --h4-color: #2d2c87;
+  --h5-color: #484848; /* Old: #472c2c */
+  --h6-color: #006DAA;
+  /* Specific Elements */
+  --sidebar-background-color: var(--background-color);
+  --navbar-background-color: var(--background-color);
+  --tooltip-background-color: var(--background-color);
+  --tooltip-border-color: var(--brand-color);
+  --code-bar-background-color: var(--raised-background-color);
+  --codeblock-color: var(--text-color);
+  --codeblock-background-color: var(--lowered-background-color);
+  --inline-code-color: var(--text-color);
+  --inline-code-background-color: #ccc;
+  --progress-background-color: var(--raised-background-color);
+  --progress-foreground-color: var(--text-color);
+}
+
+[color-scheme="dark"] .lightModeOnly, .dark .lightModeOnly {
+    display: none;
+}
+
+[color-scheme="light"] .darkModeOnly, .light .lightModeOnly {
+    display: none;
+}
