@@ -204,6 +204,26 @@ Provides some helpers for object manipulation.
 - Clear properties
 - To/From map
 
+### random.js
+HEAD  
+Requires: js/rng folder
+Provides helper functions for random generation.
+- Various generators
+    - ChaChaRNG (very good, but slow)
+    - CMWC
+    - JSFRNG
+    - MELG19937_64 (very good, medium slow, recommended for quality rng)
+    - MersenneTwister19937 (old version of MELG and pretty much the same, cult classic)
+    - PCG32
+    - RCBFastRNG
+    - RCBRNG
+    - SplitMix64 (good, very fast, recommended for most rng)
+    - Xoshiro256StarStar
+- Various helpers
+    - Generate seed from time (auto fallback for all generators)
+    - int, double, string, bool, and more
+    - shuffle
+
 ### registry.js
 HEAD  
 Adds a fully featured registry.

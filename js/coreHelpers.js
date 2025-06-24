@@ -274,6 +274,10 @@ function intDivision(a, b) {
     return Math.floor(a / b);
 }
 
+function isPowerOfTwo(x) {
+    return (x & (x - 1)) === 0;
+}
+
 function logStorageSizes() {
     let _lsTotal = 0, _xLen, _x;
     for (_x in localStorage) {
@@ -343,6 +347,9 @@ const gigabyte = megabyte * 1024;
 
 function isNumber(obj) {
     return typeof obj == 'number';
+}
+function isBigInt(value) {
+    return typeof value === 'bigint';
 }
 // isString is in string helpers region
 function isFunction(obj) {
