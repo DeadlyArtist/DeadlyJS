@@ -4,6 +4,7 @@ code {
   overflow-x: clip;
   background: var(--inline-code-background-color);
   color: var(--inline-code-color);
+  font-style: normal;
 }
 
 .codeBar {
@@ -17,12 +18,12 @@ pre {
   margin: 0;
 }
 
-  pre code {
-    background-color: var(--codeblock-background-color);
-    color: var(--codeblock-color);
-    display: block;
-    padding: 8px 16px;
-  }
+pre code {
+  background-color: var(--codeblock-background-color);
+  color: var(--codeblock-color);
+  display: block;
+  padding: 8px 16px;
+}
 
 .preContainer {
   background-color: var(--codeblock-background-color);
