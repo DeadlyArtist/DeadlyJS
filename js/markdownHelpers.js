@@ -171,7 +171,11 @@ class MarkdownHelpers {
         let codes = [];
         let codeStart = 0;
         for (let i = 0; i < markdown.length; i++) {
-            if (markdown[i] === "\`") {
+            if (markdown[i] === "\\") {
+                i++;
+                amount = 0;
+                continue;
+            } else if (markdown[i] === "\`") {
                 if (amount == 0) codeStart = i;
                 amount++;
             } else {
@@ -288,7 +292,10 @@ class MarkdownHelpers {
                         j++;
                     }
                     i = j;
-                    if (lineHappened) continue;
+                    if (lineHappened) {
+                        amount = 0;
+                        continue;
+                    }
                     let contentEnd = i - 1;
                     if (!codeBlocksOnly) codes.push({
                         block: false,
