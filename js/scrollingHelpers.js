@@ -27,10 +27,13 @@ class ScrollingHelpers {
         if (isScrolledTop()) topButton.classList.add('invisible');
         scrollButtons.appendChild(topButton);
 
-        scrollingElement.addEventListener('scroll', () => {
+        var updateFunc = () => {
             if (isScrolledTop()) topButton.classList.add('invisible');
             else topButton.classList.remove('invisible');
-        });
+        };
+
+        scrollingElement.addEventListener('scroll', updateFunc);
+        onScrollLayoutChanged(updateFunc);
     }
 
     static injectScrollBottomButton() {
@@ -41,10 +44,13 @@ class ScrollingHelpers {
         if (isScrolledBottom()) bottomButton.classList.add('invisible');
         scrollButtons.appendChild(bottomButton);
 
-        scrollingElement.addEventListener('scroll', () => {
+        var updateFunc = () => {
             if (isScrolledBottom()) bottomButton.classList.add('invisible');
             else bottomButton.classList.remove('invisible');
-        });
+        };
+
+        scrollingElement.addEventListener('scroll', updateFunc);
+        onScrollLayoutChanged(updateFunc);
     }
 
     static injectScrollButtons() {
@@ -146,6 +152,15 @@ async function doScrollTick() {
         await doScrollTick();
     }
 })();
+
+function sendScrollLayoutChanged() {
+    const event = new CustomEvent('scroll-layout-changed');
+    window.dispatchEvent(event);
+}
+
+function onScrollLayoutChanged(callback) {
+    window.addEventListener('scroll-layout-changed', e => callback());
+}
 
 // Uncomment to show scroll to top/bottom buttons
 //ScrollingHelpers.injectScrollButtons();

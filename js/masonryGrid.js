@@ -72,6 +72,7 @@ class MasonryGrid {
         const grid = this.grid;
         if (grid.children.length === 0) {
             grid.style.height = ``;
+            sendScrollLayoutChanged();
             return;
         }
 
@@ -139,6 +140,7 @@ class MasonryGrid {
 
         // If we guessed wrongly that a scrollbar would appear after resize, resize again without that assumption
         if (!rerun && containerWidth < grid.clientWidth) this.resize(true);
+        else sendScrollLayoutChanged();
     }
 }
 
